@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogSphere - Static</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <span class="fa-stack fa-lg me-3">
+                <i class="fa fa-square-o fa-stack-2x"></i>
+                <i class="fa fa-space-shuttle fa-rotate-270 fa-stack-2x"></i>
+                </span>BlogSphere
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('home')">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item" id="create-post-nav" style="display: none;">
+                        <a class="nav-link" href="#" onclick="showPage('create-post')">
+                            <i class="fas fa-plus me-1"></i>Create Post
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item" id="user-dropdown" style="display: none;">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i><span id="username-display"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="showPage('profile')">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="showPage('admin')" id="admin-link" style="display: none;">
+                                    <i class="fas fa-cogs me-2"></i>Admin Dashboard
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item" id="login-nav">
+                        <a class="nav-link" href="#" onclick="showPage('login')">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item" id="register-nav">
+                        <a class="nav-link" href="#" onclick="showPage('register')">
+                            <i class="fas fa-user-plus me-1"></i>Register
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div id="flash-messages" class="container mt-3"></div>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Home Page -->
+        <div id="home-page" class="page">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <h1><i class="fas fa-newspaper me-2"></i>Latest Posts</h1>
+                        <div class="input-group" style="max-width: 300px;">
+                            <input type="text" class="form-control" placeholder="Search posts..." id="search-input">
+                            <button class="btn btn-outline-secondary" onclick="searchPosts()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="posts-container"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>About BlogSphere
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                Welcome to BlogSphere, where stories come alive! Share your thoughts, 
+                                connect with others, and discover amazing content from our community.
+                            </p>
+                            <div class="d-grid gap-2" id="guest-welcome">
+                                <a href="#" onclick="showPage('register')" class="btn btn-primary "><i class="fas fa-user-plus me-2"></i>Join Us</a>
+                                <a href="#" onclick="showPage('login')" class="btn btn-outline-primary btn-sm"><i class="fas fa-sign-in-alt me-2"></i>Login</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div id="login-page" class="page" style="display: none;">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h4 class="mb-0">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="login-form">
+                                <div class="mb-3">
+                                    <label for="login-username" class="form-label">
+                                        <i class="fas fa-user me-1"></i>Username
+                                    </label>
+                                    <input type="text" class="form-control" id="login-username" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="login-password" class="form-label">
+                                        <i class="fas fa-lock me-1"></i>Password
+                                    </label>
+                                    <input type="password" class="form-control" id="login-password" required>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div class="text-center mt-3">
+                                <p class="text-muted">Don't have an account? 
+                                    <a href="#" onclick="showPage('register')">Register here</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Page -->
+        <div id="register-page" class="page" style="display: none;">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-success text-white text-center">
+                            <h4 class="mb-0">
+                                <i class="fas fa-user-plus me-2"></i>Register
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="register-form">
+                                <div class="mb-3">
+                                    <label for="register-username" class="form-label">
+                                        <i class="fas fa-user me-1"></i>Username
+                                    </label>
+                                    <input type="text" class="form-control" id="register-username" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="register-email" class="form-label">
+                                        <i class="fas fa-envelope me-1"></i>Email
+                                    </label>
+                                    <input type="email" class="form-control" id="register-email" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="register-password" class="form-label">
+                                        <i class="fas fa-lock me-1"></i>Password
+                                    </label>
+                                    <input type="password" class="form-control" id="register-password" required>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-user-plus me-2"></i>Register
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div class="text-center mt-3">
+                                <p class="text-muted">Already have an account? 
+                                    <a href="#" onclick="showPage('login')">Login here</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Post Page -->
+        <div id="create-post-page" class="page" style="display: none;">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">
+                                <i class="fas fa-plus me-2"></i>Create New Post
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="create-post-form">
+                                <div class="mb-3">
+                                    <label for="post-title" class="form-label">
+                                        <i class="fas fa-heading me-1"></i>Title
+                                    </label>
+                                    <input type="text" class="form-control" id="post-title" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="post-content" class="form-label">
+                                        <i class="fas fa-edit me-1"></i>Content
+                                    </label>
+                                    <textarea class="form-control" id="post-content" rows="10" required></textarea>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="post-images" class="form-label">
+                                        <i class="fas fa-images me-1"></i>Images
+                                    </label>
+                                    <input type="file" class="form-control" id="post-images" multiple accept="image/*">
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus me-2"></i>Create Post
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profile-page" class="page" style="display: none;">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-user-circle fa-5x text-muted"></i>
+                            </div>
+                            <h4 id="profile-username"></h4>
+                            <p class="text-muted" id="profile-email"></p>
+                            <p class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                Member since <span id="profile-created"></span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>Statistics
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h4 class="text-primary" id="profile-posts-count">0</h4>
+                                    <small class="text-muted">Posts</small>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="text-success" id="profile-likes-count">0</h4>
+                                    <small class="text-muted">Likes</small>
+                                </div>
+                                <div class="col-4">
+                                    <h4 class="text-info" id="profile-comments-count">0</h4>
+                                    <small class="text-muted">Comments</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>
+                            <i class="fas fa-newspaper me-2"></i>My Posts
+                        </h2>
+                        <button class="btn btn-primary" onclick="showPage('create-post')">
+                            <i class="fas fa-plus me-2"></i>Create Post
+                        </button>
+                    </div>
+                    <div id="user-posts-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post Detail Modal -->
+        <div class="modal fade" id="postModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-post-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                By <strong id="modal-post-author"></strong> • 
+                                <span id="modal-post-date"></span>
+                            </small>
+                        </div>
+                        <div id="modal-post-content" class="mb-3"></div>
+                        <div id="modal-post-images" class="mb-3"></div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <button class="btn btn-outline-danger btn-sm" onclick="toggleLike()">
+                                    <i class="fas fa-heart me-1"></i><span id="modal-like-count">0</span>
+                                </button>
+                                <span class="ms-3">
+                                    <i class="fas fa-comments me-1"></i><span id="modal-comment-count">0</span> Comments
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Comments Section -->
+                        <div class="border-top pt-3">
+                            <h6>Comments</h6>
+                            <form id="comment-form" class="mb-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="comment-input" placeholder="Add a comment...">
+                                    <button type="submit" class="btn btn-primary">Post</button>
+                                </div>
+                            </form>
+                            <div id="comments-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2025 BlogSphere. All rights reserved.</p>
+            <p>
+                <i class="fas fa-heart text-danger"></i> Made with love <p> By Aditya Raj Singh(TheDebugKid)</p>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="static/app.js"></script>
+</body>
+</html>

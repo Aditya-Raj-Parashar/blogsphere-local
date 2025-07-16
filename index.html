@@ -317,6 +317,184 @@
             </div>
         </div>
 
+                <!-- Admin Dashboard Page -->
+        <div id="admin-page" class="page" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1><i class="fas fa-cogs me-2"></i>Admin Dashboard</h1>
+                        <div>
+                            <button class="btn btn-danger me-2" onclick="app.exportData()">
+                                <i class="fas fa-download me-1"></i>Export Data
+                            </button>
+                            <button class="btn btn-warning" onclick="app.clearAllData()">
+                                <i class="fas fa-trash me-1"></i>Clear All Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="admin-users-count">0</h4>
+                                    <p class="mb-0">Total Users</p>
+                                </div>
+                                <i class="fas fa-users fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="admin-posts-count">0</h4>
+                                    <p class="mb-0">Total Posts</p>
+                                </div>
+                                <i class="fas fa-newspaper fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="admin-comments-count">0</h4>
+                                    <p class="mb-0">Total Comments</p>
+                                </div>
+                                <i class="fas fa-comments fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="admin-likes-count">0</h4>
+                                    <p class="mb-0">Total Likes</p>
+                                </div>
+                                <i class="fas fa-heart fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management Tabs -->
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="adminTabs" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-pane" type="button">
+                                <i class="fas fa-users me-1"></i>Users
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts-pane" type="button">
+                                <i class="fas fa-newspaper me-1"></i>Posts
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments-pane" type="button">
+                                <i class="fas fa-comments me-1"></i>Comments
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#data-pane" type="button">
+                                <i class="fas fa-database me-1"></i>Data Structure
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <!-- Users Tab -->
+                        <div class="tab-pane fade show active" id="users-pane">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Admin</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-users-table"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Posts Tab -->
+                        <div class="tab-pane fade" id="posts-pane">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Author</th>
+                                            <th>Created</th>
+                                            <th>Likes</th>
+                                            <th>Comments</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-posts-table"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Comments Tab -->
+                        <div class="tab-pane fade" id="comments-pane">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Content</th>
+                                            <th>Author</th>
+                                            <th>Post</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-comments-table"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Data Structure Tab -->
+                        <div class="tab-pane fade" id="data-pane">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>Data Schema</h5>
+                                    <pre id="data-schema" class="bg-light p-3 rounded"></pre>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Storage Statistics</h5>
+                                    <div id="storage-stats" class="bg-light p-3 rounded"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Post Detail Modal -->
         <div class="modal fade" id="postModal" tabindex="-1">
             <div class="modal-dialog modal-lg">

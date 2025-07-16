@@ -1,4 +1,3 @@
-
 /* Custom styles for BlogSphere */
 
 :root {
@@ -18,9 +17,6 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f8f9fa;
     line-height: 1.6;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
 }
 
 /* Navigation */
@@ -86,14 +82,7 @@ body {
 /* Comments */
 .comment {
     background-color: #f8f9fa;
-    transition: background-color 0.3s ease;
     border-radius: 10px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.comment:hover {
-    background-color: #e9ecef;
 }
 
 /* Statistics Cards */
@@ -135,74 +124,6 @@ img, video {
     max-width: 100%;
     height: auto;
     border-radius: 10px;
-    object-fit: cover;
-}
-
-/* Responsive image containers */
-.post-image-container {
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.post-image-container img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.post-image-container:hover img {
-    transform: scale(1.05);
-}
-
-/* Responsive grid for media */
-.media-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.media-grid-item {
-    aspect-ratio: 16/9;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.media-grid-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.media-grid-item video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Preview grid for index page */
-.preview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.preview-grid-item {
-    aspect-ratio: 1;
-    overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.preview-grid-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
 }
 
 /* Tables */
@@ -217,16 +138,10 @@ img, video {
     border: none;
 }
 
-/* Main content area */
-main {
-    flex: 1;
-}
-
 /* Footer */
 footer {
     background: var(--gradient-primary);
     color: white;
-    margin-top: auto;
 }
 
 /* Loading states */
@@ -299,106 +214,71 @@ footer {
     background-color: var(--light-color);
 }
 
-/* Page transitions */
-.page {
-    transition: opacity 0.3s ease-in-out;
-}
-
-/* Post images in grid */
-.post-images {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
-    margin: 10px 0;
-}
-
-.post-images img {
-    width: 100%;
-    height: 200px;
+/* Media */
+.media-preview {
+    max-height: 200px;
     object-fit: cover;
     border-radius: 10px;
 }
 
-/* Admin Dashboard Styles */
-.admin-stat-card {
-    transition: transform 0.2s ease;
+/* Loading spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
 }
 
-.admin-stat-card:hover {
-    transform: translateY(-2px);
+/* Hidden class */
+.d-none {
+    display: none !important;
 }
 
-.table-responsive {
-    border-radius: 10px;
-    overflow: hidden;
+/* File input styling */
+.form-control[type="file"] {
+    padding: 0.5rem;
 }
 
-.nav-tabs .nav-link {
-    border: none;
-    color: var(--primary-color);
-    font-weight: 500;
-}
-
-.nav-tabs .nav-link.active {
-    background-color: var(--primary-color);
+/* Statistics cards */
+.stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border-radius: 5px 5px 0 0;
+    border-radius: 15px;
 }
 
-.tab-content {
-    min-height: 400px;
+.stats-card .card-body {
+    padding: 1.5rem;
 }
 
-pre {
-    font-size: 0.9rem;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.badge {
-    font-size: 0.75rem;
-}
-
-/* Admin table styling */
-.table th {
-    font-weight: 600;
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
-}
-
-.table td {
-    vertical-align: middle;
-}
-
-/* Data structure display */
-#data-schema {
-    background-color: #f8f9fa !important;
-    border: 1px solid #dee2e6;
-    font-family: 'Courier New', monospace;
-}
-
-#storage-stats {
-    background-color: #f8f9fa !important;
-    border: 1px solid #dee2e6;
-    font-family: system-ui, -apple-system, sans-serif;
-}
-
-/* Utility classes */
-/* Utility classes */
-.cursor-pointer {
-    cursor: pointer;
-}
-
-.text-truncate-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+/* Admin dashboard specific styles */
+.admin-stats .card {
+    border-radius: 15px;
     overflow: hidden;
 }
 
-.text-truncate-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.admin-stats .card-body {
+    padding: 1.5rem;
+}
+
+/* Profile avatar */
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    margin: 0 auto 1rem;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .btn {
+        margin-bottom: 0.5rem;
+    }
 }

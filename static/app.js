@@ -10,6 +10,30 @@ class BlogApp {
         this.comments = [];
         this.likes = [];
         
+        // Data schema for structured storage
+        this.dataSchema = {
+            version: '1.0',
+            lastUpdated: null,
+            structure: {
+                users: {
+                    fields: ['id', 'username', 'email', 'password', 'isAdmin', 'createdAt', 'lastLogin'],
+                    required: ['username', 'email', 'password']
+                },
+                posts: {
+                    fields: ['id', 'userId', 'title', 'content', 'images', 'createdAt', 'updatedAt', 'status'],
+                    required: ['userId', 'title', 'content']
+                },
+                comments: {
+                    fields: ['id', 'postId', 'userId', 'content', 'createdAt', 'parentId'],
+                    required: ['postId', 'userId', 'content']
+                },
+                likes: {
+                    fields: ['id', 'postId', 'userId', 'createdAt'],
+                    required: ['postId', 'userId']
+                }
+            }
+        };
+        
         this.init();
     }
 
@@ -22,10 +46,22 @@ class BlogApp {
 
     // Data Management
     loadData() {
-        this.posts = JSON.parse(localStorage.getItem('blog_posts')) || [];
-        this.users = JSON.parse(localStorage.getItem('blog_users')) || [];
-        this.comments = JSON.parse(localStorage.getItem('blog_comments')) || [];
-        this.likes = JSON.parse(localStorage.getItem('blog_likes')) || [];
+        // Try to load structured data first
+        const structuredData = localStorage.getItem('blog_data_structured');
+        
+        if (structuredData) {
+            const parsed = JSON.parse(structuredData);
+            this.posts = parsed.data.posts || [];
+            this.users = parsed.data.users || [];
+            this.comments = parsed.data.comments || [];
+            this.likes = parsed.data.likes || [];
+        } else {
+            // Fallback to legacy format
+            this.posts = JSON.parse(localStorage.getItem('blog_posts')) || [];
+            this.users = JSON.parse(localStorage.getItem('blog_users')) || [];
+            this.comments = JSON.parse(localStorage.getItem('blog_comments')) || [];
+            this.likes = JSON.parse(localStorage.getItem('blog_likes')) || [];
+        }
         
         // Create admin user if doesn't exist
         if (!this.users.find(u => u.username === 'admin')) {
@@ -35,13 +71,37 @@ class BlogApp {
                 email: 'admin@example.com',
                 password: 'admin123',
                 isAdmin: true,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                lastLogin: null
             });
             this.saveData();
         }
     }
 
     saveData() {
+        const structuredData = {
+            metadata: {
+                ...this.dataSchema,
+                lastUpdated: new Date().toISOString(),
+                totalRecords: {
+                    users: this.users.length,
+                    posts: this.posts.length,
+                    comments: this.comments.length,
+                    likes: this.likes.length
+                }
+            },
+            data: {
+                users: this.users,
+                posts: this.posts,
+                comments: this.comments,
+                likes: this.likes
+            }
+        };
+
+        // Save structured data
+        localStorage.setItem('blog_data_structured', JSON.stringify(structuredData));
+        
+        // Keep legacy format for backward compatibility
         localStorage.setItem('blog_posts', JSON.stringify(this.posts));
         localStorage.setItem('blog_users', JSON.stringify(this.users));
         localStorage.setItem('blog_comments', JSON.stringify(this.comments));
@@ -64,8 +124,11 @@ class BlogApp {
     login(username, password) {
         const user = this.users.find(u => u.username === username && u.password === password);
         if (user) {
+            // Update last login time
+            user.lastLogin = new Date().toISOString();
             this.currentUser = user;
             localStorage.setItem('current_user', JSON.stringify(user));
+            this.saveData(); // Save updated login time
             this.updateNavigation(true);
             this.showFlashMessage('Login successful!', 'success');
             this.showPage('home');
@@ -141,6 +204,14 @@ class BlogApp {
 
     // UI Management
     showPage(pageId) {
+        // Check admin access
+        if (pageId === 'admin') {
+            if (!this.currentUser || !this.currentUser.isAdmin) {
+                this.showFlashMessage('Access denied. Admin privileges required.', 'danger');
+                return;
+            }
+        }
+
         const pages = document.querySelectorAll('.page');
         pages.forEach(page => page.style.display = 'none');
         
@@ -153,6 +224,8 @@ class BlogApp {
                 this.renderPosts();
             } else if (pageId === 'profile' && this.currentUser) {
                 this.renderProfile();
+            } else if (pageId === 'admin' && this.currentUser && this.currentUser.isAdmin) {
+                this.renderAdminDashboard();
             }
         }
     }
@@ -498,6 +571,200 @@ class BlogApp {
         document.getElementById('search-input').addEventListener('input', () => {
             this.searchPosts();
         });
+    }
+
+    // Admin Dashboard Methods
+    renderAdminDashboard() {
+        this.updateAdminStats();
+        this.renderAdminUsers();
+        this.renderAdminPosts();
+        this.renderAdminComments();
+        this.renderDataStructure();
+    }
+
+    updateAdminStats() {
+        document.getElementById('admin-users-count').textContent = this.users.length;
+        document.getElementById('admin-posts-count').textContent = this.posts.length;
+        document.getElementById('admin-comments-count').textContent = this.comments.length;
+        document.getElementById('admin-likes-count').textContent = this.likes.length;
+    }
+
+    renderAdminUsers() {
+        const tbody = document.getElementById('admin-users-table');
+        tbody.innerHTML = '';
+
+        this.users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><small class="text-muted">${user.id.substring(0, 8)}...</small></td>
+                <td><strong>${user.username}</strong></td>
+                <td>${user.email}</td>
+                <td>${user.isAdmin ? '<span class="badge bg-warning">Admin</span>' : '<span class="badge bg-secondary">User</span>'}</td>
+                <td>${this.formatDate(user.createdAt)}</td>
+                <td>
+                    ${!user.isAdmin ? `<button class="btn btn-sm btn-danger" onclick="app.deleteUser('${user.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>` : '<span class="text-muted">Protected</span>'}
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    renderAdminPosts() {
+        const tbody = document.getElementById('admin-posts-table');
+        tbody.innerHTML = '';
+
+        this.posts.forEach(post => {
+            const author = this.users.find(u => u.id === post.userId);
+            const likeCount = this.likes.filter(l => l.postId === post.id).length;
+            const commentCount = this.comments.filter(c => c.postId === post.id).length;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><small class="text-muted">${post.id.substring(0, 8)}...</small></td>
+                <td><strong>${post.title.substring(0, 30)}${post.title.length > 30 ? '...' : ''}</strong></td>
+                <td>${author ? author.username : 'Unknown'}</td>
+                <td>${this.formatDate(post.createdAt)}</td>
+                <td><span class="badge bg-danger">${likeCount}</span></td>
+                <td><span class="badge bg-info">${commentCount}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="app.showPostDetail('${post.id}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="app.deletePost('${post.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    renderAdminComments() {
+        const tbody = document.getElementById('admin-comments-table');
+        tbody.innerHTML = '';
+
+        this.comments.forEach(comment => {
+            const author = this.users.find(u => u.id === comment.userId);
+            const post = this.posts.find(p => p.id === comment.postId);
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><small class="text-muted">${comment.id.substring(0, 8)}...</small></td>
+                <td>${comment.content.substring(0, 40)}${comment.content.length > 40 ? '...' : ''}</td>
+                <td>${author ? author.username : 'Unknown'}</td>
+                <td>${post ? post.title.substring(0, 20) + '...' : 'Deleted Post'}</td>
+                <td>${this.formatDate(comment.createdAt)}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="app.deleteComment('${comment.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    renderDataStructure() {
+        const schemaElement = document.getElementById('data-schema');
+        const statsElement = document.getElementById('storage-stats');
+
+        schemaElement.textContent = JSON.stringify(this.dataSchema, null, 2);
+
+        const structuredData = localStorage.getItem('blog_data_structured');
+        const dataSize = structuredData ? new Blob([structuredData]).size : 0;
+        
+        statsElement.innerHTML = `
+            <strong>Storage Information:</strong><br>
+            Data Size: ${(dataSize / 1024).toFixed(2)} KB<br>
+            Schema Version: ${this.dataSchema.version}<br>
+            Last Updated: ${this.dataSchema.lastUpdated || 'Never'}<br><br>
+            
+            <strong>Record Counts:</strong><br>
+            Users: ${this.users.length}<br>
+            Posts: ${this.posts.length}<br>
+            Comments: ${this.comments.length}<br>
+            Likes: ${this.likes.length}
+        `;
+    }
+
+    // Admin Actions
+    deleteUser(userId) {
+        if (confirm('Are you sure you want to delete this user and all their content?')) {
+            // Remove user
+            this.users = this.users.filter(u => u.id !== userId);
+            
+            // Remove their posts
+            const userPosts = this.posts.filter(p => p.userId === userId);
+            userPosts.forEach(post => {
+                this.comments = this.comments.filter(c => c.postId !== post.id);
+                this.likes = this.likes.filter(l => l.postId !== post.id);
+            });
+            this.posts = this.posts.filter(p => p.userId !== userId);
+            
+            // Remove their comments and likes
+            this.comments = this.comments.filter(c => c.userId !== userId);
+            this.likes = this.likes.filter(l => l.userId !== userId);
+            
+            this.saveData();
+            this.renderAdminDashboard();
+            this.showFlashMessage('User and all their content deleted successfully.', 'success');
+        }
+    }
+
+    deletePost(postId) {
+        if (confirm('Are you sure you want to delete this post?')) {
+            this.posts = this.posts.filter(p => p.id !== postId);
+            this.comments = this.comments.filter(c => c.postId !== postId);
+            this.likes = this.likes.filter(l => l.postId !== postId);
+            
+            this.saveData();
+            this.renderAdminDashboard();
+            this.showFlashMessage('Post deleted successfully.', 'success');
+        }
+    }
+
+    deleteComment(commentId) {
+        if (confirm('Are you sure you want to delete this comment?')) {
+            this.comments = this.comments.filter(c => c.id !== commentId);
+            this.saveData();
+            this.renderAdminDashboard();
+            this.showFlashMessage('Comment deleted successfully.', 'success');
+        }
+    }
+
+    exportData() {
+        const structuredData = localStorage.getItem('blog_data_structured');
+        if (structuredData) {
+            const blob = new Blob([structuredData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `blogsphere_data_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            this.showFlashMessage('Data exported successfully.', 'success');
+        }
+    }
+
+    clearAllData() {
+        if (confirm('Are you sure you want to clear ALL data? This action cannot be undone!')) {
+            if (confirm('This will delete everything except your admin account. Continue?')) {
+                // Keep only admin user
+                const adminUser = this.users.find(u => u.username === 'admin');
+                this.users = adminUser ? [adminUser] : [];
+                this.posts = [];
+                this.comments = [];
+                this.likes = [];
+                
+                this.saveData();
+                this.renderAdminDashboard();
+                this.showFlashMessage('All data cleared successfully.', 'warning');
+            }
+        }
     }
 
     // Utility functions

@@ -319,6 +319,71 @@ footer {
     border-radius: 10px;
 }
 
+/* Admin Dashboard Styles */
+.admin-stat-card {
+    transition: transform 0.2s ease;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 5px 5px 0 0;
+}
+
+.tab-content {
+    min-height: 400px;
+}
+
+pre {
+    font-size: 0.9rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+/* Admin table styling */
+.table th {
+    font-weight: 600;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Data structure display */
+#data-schema {
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6;
+    font-family: 'Courier New', monospace;
+}
+
+#storage-stats {
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Utility classes */
 /* Utility classes */
 .cursor-pointer {
     cursor: pointer;
